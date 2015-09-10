@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var htmlfetcher = require('../workers/htmlfetcher');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -73,12 +74,11 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urlArray) {
   _.each(urlArray, function(url){  
-        fs.writeFile(paths.archivedSites + "/" + url);
-      //this will eventually call the htmlfetcher file once we've written it
-          //may have to do the htmlfetcher before calling writeFile
+      var file = fs.createWriteStream(url + ".txt");
+      url = "http://" + url;
+      htmlfetcher.fetchData(url, file);
   })
 };
-
 
 exports.paths = paths;
 exports.addUrlToList = addUrlToList;
