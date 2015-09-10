@@ -3,7 +3,10 @@
   "version": "1.0.1",
   "main": "web/basic-server.js",
   "license": "Copyright 2014, Hack Reactor. All rights reserved.",
-  "dependencies": {},
+  "dependencies": {
+    "http-get": "^0.5.10",
+    "nodemon": "^1.4.1"
+  },
   "devDependencies": {
     "chai": "^1.9.0",
     "cron": "^1.0.3",
@@ -15,6 +18,18 @@
   },
   "scripts": {
     "test": "mocha test",
-    "start": "node ./web/basic-server.js"
-  }
+    "start": "nodemon ./web/basic-server.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/youngfreezy/2015-08-web-historian.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/youngfreezy/2015-08-web-historian/issues"
+  },
+  "homepage": "https://github.com/youngfreezy/2015-08-web-historian"
 }

@@ -9,9 +9,10 @@ var _ = require('underscore');
  * customize it in any way you wish.
  */
 
-exports.paths = {
+var paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
+  index: path.join(__dirname, '../web/public/index.html'),
   list: path.join(__dirname, '../archives/sites.txt')
 };
 
@@ -25,17 +26,65 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function() {
+var readListOfUrls = function(callback) { 
+  var sitesArray = [];
+  fs.readFile(paths.list, {encoding : 'utf8'} ,function(err, data){
+    if(err){
+      console.log(err);
+    }
+    sitesArray = data.split("\n");
+    callback(sitesArray);
+  });
+}
+
+var isUrlInList = function(url, callback) {
+ var sitesArray = [];
+ var hasValue = false; 
+  fs.readFile(paths.list, {encoding : 'utf8'} ,function(err, data){
+    if(err){
+      console.log(err);
+    }
+    sitesArray = data.split("\n");
+    _.each(sitesArray, function(val){
+      if (url===val) {
+        hasValue = true;
+      };
+    })
+    callback(hasValue);
+  }); 
 };
 
-exports.isUrlInList = function() {
+var addUrlToList = function(url, callback) {
+
+  fs.appendFile(paths.list, url + '\n', 'utf8', function(err, data){
+    if (err){
+      console.log(err);
+    } 
+    callback();
+  });
+
 };
 
-exports.addUrlToList = function() {
+var isUrlArchived = function(url, callback) {
+  addUrlToList(url, function(){
+    callback();
+  });
 };
 
-exports.isUrlArchived = function() {
+var downloadUrls = function(urlArray) {
+  _.each(urlArray, function(url){  
+    fs.writeFile(paths.archivedSites + url, "This file is awesome!", function(err, data){
+      //this will eventually call the htmlfetcher file once we've written it
+          //may have to do the htmlfetcher before calling writeFile
+          
+    });
+  })
 };
 
-exports.downloadUrls = function() {
-};
+
+exports.paths = paths;
+exports.addUrlToList = addUrlToList;
+exports.isUrlInList = isUrlInList;
+exports.readListOfUrls = readListOfUrls;
+exports.isUrlArchived = isUrlArchived;
+exports.downloadUrls = downloadUrls;
