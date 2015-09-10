@@ -5,19 +5,14 @@ var fs = require('fs');
 var http = require('http');
 var getter = require('http-get')
 var querystring = require('querystring');
+var htmlfetcher = require('../workers/htmlfetcher');
 // require more modules/folders here!
 
 var handleRequest = function (req, res) {
 var statusCode;
 
   if (req.method === "GET") {
-    // var url = req.url;
-    // var request = require('request');
-    // request.get(req.url, function(err, response, body){
 
-    //TODO: Return the content of the actual website from the archive.    
-       
-    // })
       if (req.url === "/") {
         fs.readFile(path.join(__dirname, '../web/public/index.html'), function(err, data){
           if(err){
@@ -34,26 +29,39 @@ var statusCode;
   }
 
   if (req.method === "POST") {
-    // if (req.url === "/") {
       var url = "";
-      req.on('data', function(data){      //data giving back NOTHING!.
-        // console.log(JSON.stringify(data));
+      req.on('data', function(data){ 
         url += data;
-        console.log(url);
-
       });
 
       req.on('end', function(){
         statusCode = 302;
         url = querystring.parse(url);
-        //var url //parse the data, and then get the url property of the resulting object
-        archive.addUrlToList(url.url, function(){
-          res.writeHead(statusCode, helpers.headers);
-          res.end();
-        });
-      })
 
-    // }
+        //check if URL is in the list
+        var urlKnown = archive.isUrlInList(url.url);      //returning false
+        //if it is, get the data
+        if (urlKnown) {
+          //get the data from the file
+          //return the data to the user! via res.on('end', function(){})
+
+        //if it is not, 
+        } else if (!urlKnown) {
+          // var statusCode = 404;
+          //add to list
+          archive.addUrlToList(url.url, function(){
+            res.writeHead(statusCode, helpers.headers);
+            //// res.end();
+          });
+          var urls = [url.url];
+          //get the data and make the file
+          archive.downloadUrls(urls);
+          //return 404 status code
+          res.writeHeader(statusCode);
+          res.end('404, file not found');
+        }
+      });
+    }
 
     //TODO: this should call the "addURLtoList" helper function. 
     // isUrlInList(req.url)
@@ -66,7 +74,6 @@ var statusCode;
     //     }
     //   })
     // })
-    }
 };
 
 exports.handleRequest = handleRequest;

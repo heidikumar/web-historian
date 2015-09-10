@@ -13,7 +13,10 @@ exports.headers = headers = {
 exports.serveAssets = function(res, asset, callback) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
-  // css, or anything that doesn't change often.)
+  // css, or anything that doesn't change often.)  
+
+
+
 };
 
   // Write some code here that helps serve up your static files!
@@ -21,3 +24,12 @@ exports.serveAssets = function(res, asset, callback) {
   // css, or anything that doesn't change often.)
 
 // As you progress, keep thinking about what helper functions you can put here!
+
+
+
+//check if there is the file in the folder.
+  //if it is there:
+    //get the data from the file
+    //return to user
+  //if it is not there:
+    //return a statusCode 404 Error.

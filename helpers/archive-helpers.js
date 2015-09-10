@@ -12,7 +12,7 @@ var htmlfetcher = require('../workers/htmlfetcher');
 
  var paths = {
   siteAssets: path.join(__dirname, '../web/public'),
-  archivedSites: path.join(__dirname, '../archives/sites'),
+  archivedSites: path.join(__dirname, '.../archives/sites'),
   index: path.join(__dirname, '../web/public/index.html'),
   list: path.join(__dirname, '../archives/sites.txt')
 };
@@ -30,10 +30,7 @@ exports.initialize = function(pathsObj) {
 exports.readListOfUrls = function(callback) { 
   var sitesArray = [];
   fs.readFile(paths.list, {encoding : 'utf8'} ,function(err, data){
-    if(err){
-      console.log(err);
-    }
-    sitesArray = data.split("\n");
+    sitesArray = data.toString().split("\n");
     callback(sitesArray);
   });
 }
@@ -41,43 +38,50 @@ exports.readListOfUrls = function(callback) {
 exports.isUrlInList = function(url, callback) {
  var sitesArray = [];
  var hasValue = false; 
-  fs.readFile(paths.list, {encoding : 'utf8'} ,function(err, data){
-    if(err){
-      console.log(err);
-    }
-    sitesArray = data.split("\n");
+   exports.readListOfUrls(function(sitesArray){
+    // sitesArray = data.split("\n");
     _.each(sitesArray, function(val){
       if (url===val) {
         hasValue = true;
       };
     })
+   })
+  if (callback){
     callback(hasValue);
-  }); 
+  } else {
+    return hasValue;
+  }
 };
 
 var addUrlToList = function(url, callback) {
-
   fs.appendFile(paths.list, url + '\n', 'utf8', function(err, data){
     if (err){
       console.log(err);
     } 
     callback();
   });
-
 };
 
-exports.isUrlArchived = function(url, callback) {
+exports.isUrlArchived = function(url, callback) {     //not really checking the thing we are supposed to check!
   addUrlToList(url, function(){
     callback();
   });
 };
 
 exports.downloadUrls = function(urlArray) {
-  _.each(urlArray, function(url){  
-      var file = fs.createWriteStream(url + ".txt");
-      url = "http://" + url;
-      htmlfetcher.fetchData(url, file);
-  })
+  _.each(urlArray, function(url){
+    var location = paths.archivedSites + "/" + url;
+    fs.writeFile(location, "This file is awesome", function(err,data){
+      if (err) {
+        console.log('there was an error in your writeFile function');
+      }
+    });
+
+    var file = fs.createWriteStream(paths.archivedSites + "/" + url);
+    // console.log(file);
+    url = "http://" + url;
+    htmlfetcher.fetchData(url, file);
+  })  
 };
 
 exports.paths = paths;
