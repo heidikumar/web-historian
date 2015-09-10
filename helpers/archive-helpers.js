@@ -9,7 +9,7 @@ var _ = require('underscore');
  * customize it in any way you wish.
  */
 
-var paths = {
+ var paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
   index: path.join(__dirname, '../web/public/index.html'),
@@ -26,7 +26,7 @@ exports.initialize = function(pathsObj) {
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-var readListOfUrls = function(callback) { 
+exports.readListOfUrls = function(callback) { 
   var sitesArray = [];
   fs.readFile(paths.list, {encoding : 'utf8'} ,function(err, data){
     if(err){
@@ -37,7 +37,7 @@ var readListOfUrls = function(callback) {
   });
 }
 
-var isUrlInList = function(url, callback) {
+exports.isUrlInList = function(url, callback) {
  var sitesArray = [];
  var hasValue = false; 
   fs.readFile(paths.list, {encoding : 'utf8'} ,function(err, data){
@@ -65,26 +65,24 @@ var addUrlToList = function(url, callback) {
 
 };
 
-var isUrlArchived = function(url, callback) {
+exports.isUrlArchived = function(url, callback) {
   addUrlToList(url, function(){
     callback();
   });
 };
 
-var downloadUrls = function(urlArray) {
+exports.downloadUrls = function(urlArray) {
   _.each(urlArray, function(url){  
-    fs.writeFile(paths.archivedSites + url, "This file is awesome!", function(err, data){
+        fs.writeFile(paths.archivedSites + "/" + url);
       //this will eventually call the htmlfetcher file once we've written it
           //may have to do the htmlfetcher before calling writeFile
-          
-    });
   })
 };
 
 
 exports.paths = paths;
 exports.addUrlToList = addUrlToList;
-exports.isUrlInList = isUrlInList;
-exports.readListOfUrls = readListOfUrls;
-exports.isUrlArchived = isUrlArchived;
-exports.downloadUrls = downloadUrls;
+// exports.isUrlInList = isUrlInList;
+// exports.readListOfUrls = readListOfUrls;
+// exports.isUrlArchived = isUrlArchived;
+// exports.downloadUrls = downloadUrls;
